@@ -177,9 +177,8 @@ def get_conversation(conversation_id: int, request: Request, db: Session = Depen
     }
 
 @app.patch("/api/conversations/{conversation_id}")
-async def rename_conversation(conversation_id: int, request: Request, db: Session = Depends(get_db)):
+def rename_conversation(conversation_id: int, payload: dict, request: Request, db: Session = Depends(get_db)):
     user = require_user(request, db)
-    payload = await request.json()
     title = str(payload.get("title", "")).strip()[:180]
     c = db.query(Conversation).filter(Conversation.id == conversation_id, Conversation.user_id == user.id).first()
     if not c:
@@ -201,16 +200,22 @@ def delete_conversation(conversation_id: int, request: Request, db: Session = De
     return {"deleted": True}
 
 @app.post("/api/conversations/{conversation_id}/messages")
-async def send_message(conversation_id: int, request: Request, db: Session = Depends(get_db)):
+def send_message(conversation_id: int, payload: dict, request: Request, db: Session = Depends(get_db)):
     user = require_user(request, db)
-    payload = await request.json()
     content = str(payload.get("content", "")).strip()
     if not content or len(content) > 4000:
         raise HTTPException(status_code=400, detail="Message must contain 1–4,000 characters.")
     c = db.query(Conversation).filter(Conversation.id == conversation_id, Conversation.user_id == user.id).first()
     if not c:
         raise HTTPException(status_code=404, detail="Conversation not found.")
-    prior = [{"role": m.role, "content": m.content} for m in c.messages[-10:]]
+    recent_messages = (
+        db.query(Message)
+        .filter(Message.conversation_id == c.id)
+        .order_by(desc(Message.id))
+        .limit(8)
+        .all()
+    )
+    prior = [{"role": m.role, "content": m.content} for m in reversed(recent_messages)]
     db.add(Message(conversation_id=c.id, role="user", content=content))
     db.commit()
     reply, matched_products = build_assistant_reply(db, content, prior, user.id, user.name)
@@ -245,9 +250,8 @@ def get_cart(request: Request, db: Session = Depends(get_db)):
     return {"items": items, "count": sum(x["quantity"] for x in items)}
 
 @app.post("/api/cart")
-async def add_to_cart(request: Request, db: Session = Depends(get_db)):
+def add_to_cart(payload: dict, request: Request, db: Session = Depends(get_db)):
     user = require_user(request, db)
-    payload = await request.json()
     product_id = int(payload.get("product_id", 0))
     quantity = max(1, min(int(payload.get("quantity", 1)), 10))
     product = db.query(Product).filter(Product.id == product_id, Product.active.is_(True)).first()
