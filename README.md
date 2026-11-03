@@ -135,3 +135,8 @@ This is a functional local/demo application, not a production-ready marketplace:
 - Replace the demo account and sample data before public release.
 - Use PostgreSQL and managed object storage for production.
 - Never commit `.env`.
+
+
+## Live AI and web research
+
+ShopMate supports Groq's `openai/gpt-oss-120b` model. Set `GROQ_API_KEY` as a secret environment variable, then set `LLM_ENABLED=true`, `GROQ_MODEL=openai/gpt-oss-120b`, and `GROQ_WEB_SEARCH_ENABLED=true`. For external comparisons and current research, the model can use Groq's built-in browser search and return citations. It searches selected public sources, not the entire internet, and cannot guarantee every listing or price is current. The private ShopMate catalogue, account orders, and store policies remain authoritative for ShopMate-specific information. See `render-deploy.md` for setup.
