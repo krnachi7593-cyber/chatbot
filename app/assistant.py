@@ -140,7 +140,7 @@ def llm_answer(
                 f"stock {p['stock']} | {p['description']}"
                 for p in products[:8]
             )
-            system += "\\nMatched catalogue products (store source of truth):\\n" + catalogue
+            system += "\nMatched catalogue products (store source of truth):\n" + catalogue
 
         messages = [{"role": "system", "content": system}]
         for item in history[-8:]:
