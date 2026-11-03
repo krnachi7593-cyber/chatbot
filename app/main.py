@@ -100,26 +100,26 @@ def home(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse("/login", status_code=303)
     conversations = db.query(Conversation).filter(Conversation.user_id == user.id).order_by(desc(Conversation.updated_at)).all()
     products = db.query(Product).filter(Product.active.is_(True)).order_by(desc(Product.rating)).limit(4).all()
-    return templates.TemplateResponse("index.html", {
-        "request": request, "user": user, "conversations": conversations,
+    return templates.TemplateResponse(request=request, name="index.html", context={
+        "user": user, "conversations": conversations,
         "featured_products": [product_to_dict(p) for p in products]
     })
 
 @app.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
-    return templates.TemplateResponse("auth.html", {"request": request, "mode": "login", "error": None})
+    return templates.TemplateResponse(request=request, name="auth.html", context={"mode": "login", "error": None})
 
 @app.get("/register", response_class=HTMLResponse)
 def register_page(request: Request):
-    return templates.TemplateResponse("auth.html", {"request": request, "mode": "register", "error": None})
+    return templates.TemplateResponse(request=request, name="auth.html", context={"mode": "register", "error": None})
 
 @app.post("/auth/register")
 def register(request: Request, name: str = Form(...), email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     email = email.strip().lower()
     if len(name.strip()) < 2 or len(password) < 10 or "@" not in email:
-        return templates.TemplateResponse("auth.html", {"request": request, "mode": "register", "error": "Enter a valid name and email. Password must be at least 10 characters."}, status_code=400)
+        return templates.TemplateResponse(request=request, name="auth.html", context={"mode": "register", "error": "Enter a valid name and email. Password must be at least 10 characters."}, status_code=400)
     if db.query(User).filter(User.email == email).first():
-        return templates.TemplateResponse("auth.html", {"request": request, "mode": "register", "error": "An account with this email already exists."}, status_code=400)
+        return templates.TemplateResponse(request=request, name="auth.html", context={"mode": "register", "error": "An account with this email already exists."}, status_code=400)
     user = User(name=name.strip(), email=email, password_hash=hash_password(password))
     db.add(user)
     db.commit()
@@ -131,7 +131,7 @@ def register(request: Request, name: str = Form(...), email: str = Form(...), pa
 def login(request: Request, email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email.strip().lower()).first()
     if not user or not verify_password(password, user.password_hash):
-        return templates.TemplateResponse("auth.html", {"request": request, "mode": "login", "error": "Invalid email or password."}, status_code=401)
+        return templates.TemplateResponse(request=request, name="auth.html", context={"mode": "login", "error": "Invalid email or password."}, status_code=401)
     request.session.clear()
     request.session["user_id"] = user.id
     return RedirectResponse("/", status_code=303)
