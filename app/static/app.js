@@ -367,6 +367,20 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     if (!cartModal.classList.contains("hidden")) closeCart();
     closeSidebar();
+    return;
+  }
+  if (event.key === "Tab" && !cartModal.classList.contains("hidden")) {
+    const focusable = $("button:not(:disabled), a[href], input:not(:disabled), textarea:not(:disabled)", cartModal);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 });
 
