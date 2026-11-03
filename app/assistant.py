@@ -109,7 +109,7 @@ def llm_answer(
 
         model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
         web_search_enabled = os.getenv("GROQ_WEB_SEARCH_ENABLED", "true").lower() == "true"
-        client = Groq(api_key=api_key, timeout=90.0, max_retries=1)
+        client = Groq(api_key=api_key, timeout=50.0, max_retries=0)
 
         system = (
             "You are ShopMate, an AI shopping and e-commerce research assistant. "
