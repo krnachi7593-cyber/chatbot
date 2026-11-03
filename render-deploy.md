@@ -26,9 +26,9 @@
 | `APP_SECRET_KEY` | Render-generated secret | Yes |
 | `DATABASE_URL` | Render PostgreSQL connection string | Yes |
 | `COOKIE_SECURE` | `true` | Yes on HTTPS |
-| `LLM_ENABLED` | `false` | Local AI mode |
-| `OPENAI_API_KEY` | Leave unset | No |
-| `OPENAI_MODEL` | `gpt-4.1-mini` (unused in local mode) | No |
+| `LLM_ENABLED` | `true` | Enable Groq model |
+| `GROQ_API_KEY` | Leave unset | No |
+| `GROQ_MODEL` | `openai/gpt-oss-120b` (unused in local mode) | No |
 | `ALLOWED_ORIGINS` | Exact deployed origin | Recommended |
 | `PYTHON_VERSION` | `3.12.8` | Build pin |
 
@@ -57,9 +57,14 @@ Never share your Render password, GitHub password, personal access token, or API
 
 ## Current app compatibility note
 
-The requirements file includes `psycopg[binary]` so SQLAlchemy can connect to Render PostgreSQL. The OpenAI SDK is intentionally omitted because this deployment uses Local AI mode. Keep `LLM_ENABLED=false` and leave `OPENAI_API_KEY` unset.
+The requirements file includes `psycopg[binary]` so SQLAlchemy can connect to Render PostgreSQL. The Groq SDK is required for live model mode. Set `GROQ_API_KEY`, `LLM_ENABLED=true`, `GROQ_MODEL=openai/gpt-oss-120b`, and `GROQ_WEB_SEARCH_ENABLED=true` in Render. Keep the key out of GitHub and `.env.example`. Browser search can retrieve selected public web sources for current product research; it does not crawl the whole internet or guarantee comprehensive coverage. Store-specific price, stock, order, and policy answers must continue to use the ShopMate database as the source of truth.
 
 
 ## Free-tier data warning (read before choosing a plan)
 
 Render's current documentation says Free web services spin down after 15 minutes of inactivity and their local filesystem is ephemeral. Free Render Postgres databases expire 30 days after creation (with a 14-day grace period before deletion). The Blueprint currently selects Free plans as a low-cost demo starting point. For data that must survive beyond the demo window, select a paid PostgreSQL plan before deploying, or change the Blueprint database plan to a paid plan. Do not use the Free database for real customer data. See https://render.com/docs/free.
+
+
+### Groq environment setup
+
+In Render, open the `shopmate-ai` service, choose **Environment**, add `GROQ_API_KEY` with the replacement secret generated in Groq, and set the four variables listed above. Save and redeploy. Revoke any API key that has been pasted into chats, screenshots, Git commits, or logs.
