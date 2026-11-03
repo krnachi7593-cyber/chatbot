@@ -19,9 +19,13 @@ services:
       - key: COOKIE_SECURE
         value: "true"
       - key: LLM_ENABLED
-        value: "false"
-      - key: OPENAI_MODEL
-        value: "gpt-4.1-mini"
+        value: "true"
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: "openai/gpt-oss-120b"
+      - key: GROQ_WEB_SEARCH_ENABLED
+        value: "true"
       - key: ALLOWED_ORIGINS
         value: "https://shopmate-ai.onrender.com"
 databases:
