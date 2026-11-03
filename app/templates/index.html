@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ShopMate AI · Shopping assistant</title><link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="/"><span class="brand-mark">S</span><span>shopmate<span class="brand-ai">.ai</span></span></a>
+    <button class="new-chat-btn" id="newChatBtn"><span>＋</span> New conversation</button>
+    <div class="side-label">YOUR CHATS</div>
+    <div class="conversation-list" id="conversationList">
+      {% for c in conversations %}<button class="conversation-link" data-id="{{ c.id }}"><span class="chat-dot"></span><span class="conversation-title">{{ c.title }}</span></button>{% endfor %}
+    </div>
+    <div class="sidebar-bottom"><div class="user-mini"><div class="avatar">{{ user.name[:1]|upper }}</div><div><b>{{ user.name }}</b><small>{{ user.email }}</small></div></div><form method="post" action="/auth/logout"><button class="logout-btn" type="submit">Sign out</button></form></div>
+  </aside>
+  <main class="main-panel">
+    <header class="topbar"><button class="mobile-menu" id="mobileMenu">☰</button><div><span class="topbar-title">Shopping assistant</span><span class="online-dot"></span><small>Online</small></div><div class="top-actions"><button class="cart-button" id="cartButton">Cart <span id="cartCount">0</span></button><div class="secure-label">✦ AI-powered shopping</div></div></header>
+    <section class="chat-scroll" id="chatScroll">
+      <div class="welcome" id="welcome"><div class="welcome-icon">✦</div><div class="eyebrow">THE SMARTER WAY TO SHOP</div><h1>Hey {{ user.name.split(' ')[0] }},<br><span>what are we finding today?</span></h1><p>I can help you discover products, compare options, find the right fit for your budget, and take care of your orders.</p>
+        <div class="suggestion-grid">
+          <button class="suggestion" data-prompt="Recommend wireless headphones under ₹3,000"><span class="suggestion-icon">◖</span><b>Find my next favourite</b><small>Wireless headphones under ₹3,000</small></button>
+          <button class="suggestion" data-prompt="Compare laptops for college and coding"><span class="suggestion-icon">▣</span><b>Compare products</b><small>Find the right laptop for college</small></button>
+          <button class="suggestion" data-prompt="Show me your best rated products"><span class="suggestion-icon">✧</span><b>Explore bestsellers</b><small>Customer-rated favourites</small></button>
+          <button class="suggestion" data-prompt="What is your return and refund policy?"><span class="suggestion-icon">↺</span><b>Need a little help?</b><small>Returns, refunds and delivery</small></button>
+        </div>
+      </div>
+      <div class="messages" id="messages"></div><div class="typing hidden" id="typing"><span></span><span></span><span></span><small>ShopMate is thinking</small></div>
+    </section>
+    <footer class="composer-area"><div class="composer-wrap"><textarea id="messageInput" rows="1" maxlength="4000" placeholder="Ask me to find, compare or recommend something..."></textarea><button class="send-btn" id="sendBtn" aria-label="Send message">↑</button></div><div class="composer-hint"><span>ShopMate can make mistakes. Check product details before purchasing.</span><span>Enter to send · Shift + Enter for new line</span></div></footer>
+  </main>
+  <aside class="product-rail"><div class="rail-heading"><div><span class="eyebrow">CURATED FOR YOU</span><h3>Popular picks</h3></div><button id="refreshProducts" class="icon-btn" title="Refresh products">↻</button></div>
+    <div id="featuredProducts" class="featured-list">{% for p in featured_products %}<article class="mini-product"><div class="mini-image"><img src="{{ p.image_url }}" alt="{{ p.name }}" onerror="this.style.display='none'"></div><div class="mini-info"><span>{{ p.category }}</span><b>{{ p.name }}</b><strong>₹{{ "{:,.0f}".format(p.price) }}</strong><small>★ {{ p.rating }} · {{ p.stock }} in stock</small></div><button class="mini-add" data-product-id="{{ p.id }}" title="Add to cart">＋</button></article>{% endfor %}</div>
+    <div class="rail-note"><span>✦</span><div><b>Shopping, made personal</b><small>Tell ShopMate what matters to you. We'll help narrow it down.</small></div></div><div class="demo-note"><b>Demo store</b><small>Sample products and orders are illustrative. No real payment is processed.</small></div>
+  </aside>
+</div>
+<div class="modal-backdrop hidden" id="cartModal"><section class="cart-modal"><div class="modal-head"><div><span class="eyebrow">YOUR SELECTION</span><h2>Shopping cart</h2></div><button class="icon-btn" id="closeCart">×</button></div><div id="cartItems" class="cart-items"></div><div class="cart-total"><span>Subtotal</span><b id="cartTotal">₹0</b></div><p class="muted small">Demo cart only. Checkout and real payments are not enabled.</p></section></div>
+<script src="/static/app.js"></script></body></html>
