@@ -23,6 +23,7 @@ function renderMarkdownLite(value) {
   let safe = escapeHtml(value);
   safe = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
   safe = safe.replace(/`([^`]+)`/g, "<code>$1</code>");
+  safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
   safe = safe.replace(/^- (.*)$/gm, "• $1");
   return safe.replace(/\n/g, "<br>");
 }
@@ -86,6 +87,7 @@ function appendMessage(role, content, products = []) {
     }, { once: true });
   });
   messagesEl.appendChild(article);
+  while (messagesEl.children.length > 120) messagesEl.firstElementChild?.remove();
   scrollBottom();
 }
 
