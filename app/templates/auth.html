@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ "Create account" if mode == "register" else "Sign in" }} · ShopMate AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-body">
+  <main class="auth-shell">
+    <a class="brand auth-brand" href="/"><span class="brand-mark">S</span><span>shopmate<span class="brand-ai">.ai</span></span></a>
+    <section class="auth-card">
+      <div class="eyebrow">YOUR SMARTER SHOPPING COMPANION</div>
+      <h1>{{ "Create your account" if mode == "register" else "Welcome back" }}</h1>
+      <p class="muted">{{ "Join ShopMate to get personal shopping help." if mode == "register" else "Sign in to continue your shopping conversation." }}</p>
+      {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+      <form method="post" action="{{ '/auth/register' if mode == 'register' else '/auth/login' }}">
+        {% if mode == "register" %}
+          <label>Full name<input name="name" required minlength="2" placeholder="Your name"></label>
+        {% endif %}
+        <label>Email address<input type="email" name="email" required placeholder="you@example.com"></label>
+        <label>Password<input type="password" name="password" required minlength="{{ 10 if mode == 'register' else 1 }}" placeholder="{{ 'At least 10 characters' if mode == 'register' else 'Your password' }}"></label>
+        <button class="primary-btn full-btn" type="submit">{{ "Create account" if mode == "register" else "Sign in" }} <span>→</span></button>
+      </form>
+      <p class="auth-switch">{{ "Already have an account?" if mode == "register" else "New to ShopMate?" }} <a href="{{ '/login' if mode == 'register' else '/register' }}">{{ "Sign in" if mode == "register" else "Create an account" }}</a></p>
+    </section>
+    <p class="auth-foot">Demo account: <b>demo@shopmate.ai</b> / <b>ShopMate123!</b></p>
+  </main>
+</body>
+</html>
