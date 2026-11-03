@@ -135,7 +135,7 @@ def llm_answer(
             f"Trusted ShopMate account/catalogue context:\n{store_context[:6000]}"
         )
         if products:
-            catalogue = "\\n".join(
+            catalogue = "\n".join(
                 f"{p['name']} | SKU {p['sku']} | ₹{p['price']} | "
                 f"stock {p['stock']} | {p['description']}"
                 for p in products[:8]
@@ -157,6 +157,7 @@ def llm_answer(
             "temperature": 1,
             "max_completion_tokens": 2048,
             "stream": False,
+            "citation_options": "enabled",
         }
         if web_search_enabled:
             request["tools"] = [{"type": "browser_search"}]
