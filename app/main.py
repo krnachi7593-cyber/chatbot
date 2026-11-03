@@ -223,7 +223,7 @@ async def send_message(conversation_id: int, request: Request, db: Session = Dep
         "reply": reply,
         "products": matched_products,
         "conversation_id": c.id,
-        "llm_enabled": os.getenv("LLM_ENABLED", "false").lower() == "true" and bool(os.getenv("OPENAI_API_KEY"))
+        "llm_enabled": os.getenv("LLM_ENABLED", "false").lower() == "true" and bool(os.getenv("GROQ_API_KEY"))
     }
 
 @app.get("/api/orders")
